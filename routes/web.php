@@ -3,10 +3,10 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\BlogController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [BlogController::class, 'index'])->name('home');
+Route::get('/blog/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

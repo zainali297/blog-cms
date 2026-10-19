@@ -32,6 +32,9 @@
                                 <td class="p-4">{{ ucfirst($post->status) }}</td>
                                 <td class="p-4">{{ $post->created_at->format('d M Y') }}</td>
                                 <td class="p-4 flex gap-4">
+                                    @if ($post->status === 'published')
+    <a href="{{ route('blog.show', $post) }}" class="text-gray-600 hover:underline">View</a>
+@endif
                                     <a href="{{ route('posts.edit', $post) }}" class="text-indigo-600 hover:underline">Edit</a>
                                     <form method="POST" action="{{ route('posts.destroy', $post) }}"
                                           onsubmit="return confirm('Delete this post?')">
