@@ -22,6 +22,21 @@
 </div>
 
 <div>
+    <x-input-label for="image" value="Cover image (optional, JPG/PNG/WebP, max 2 MB)" />
+
+    @if (!empty($post->image_path))
+        <img src="{{ $post->image_url }}" alt="" class="mt-2 h-40 rounded">
+        <label class="mt-2 flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+            <input type="checkbox" name="remove_image" value="1"> Remove current image
+        </label>
+    @endif
+
+    <input id="image" name="image" type="file" accept="image/*"
+           class="mt-2 block w-full text-sm text-gray-700 dark:text-gray-300">
+    <x-input-error :messages="$errors->get('image')" class="mt-2" />
+</div>
+
+<div>
     <x-input-label for="status" value="Status" />
     <select id="status" name="status"
         class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">

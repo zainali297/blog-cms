@@ -1,5 +1,8 @@
 <x-blog-layout :title="$post->title">
     <article class="bg-white shadow sm:rounded-lg p-8">
+        @if ($post->image_url)
+    <img src="{{ $post->image_url }}" alt="{{ $post->title }}" class="w-full max-h-96 object-cover rounded mb-6">
+@endif
         <h1 class="text-3xl font-bold">{{ $post->title }}</h1>
         <p class="text-sm text-gray-500 mt-2">
             By {{ $post->user->name }} &middot; {{ $post->published_at?->format('d M Y') }}

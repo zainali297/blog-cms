@@ -6,7 +6,7 @@
     <div class="py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 shadow sm:rounded-lg p-6">
-                <form method="POST" action="{{ route('posts.store') }}" class="space-y-6">
+                <form method="POST" action="{{ route('posts.store') }}" enctype="multipart/form-data" class="space-y-6">
                     @include('posts._form')
                     <x-primary-button>Save Post</x-primary-button>
                 </form>
