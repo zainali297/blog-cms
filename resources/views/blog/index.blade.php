@@ -3,6 +3,9 @@
 
     @forelse ($posts as $post)
         <article class="bg-white shadow sm:rounded-lg p-6 mb-6">
+            @if ($post->image_url)
+    <img src="{{ $post->image_url }}" alt="{{ $post->title }}" class="w-full h-48 object-cover rounded mb-4">
+@endif
             <h2 class="text-2xl font-semibold">
                 <a href="{{ route('blog.show', $post) }}" class="hover:underline">{{ $post->title }}</a>
             </h2>

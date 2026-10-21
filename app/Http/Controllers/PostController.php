@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class PostController extends Controller
@@ -23,8 +24,14 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $data = $this->validated($request);
+        unset($data['image'], $data['remove_image']);
+
         $data['slug'] = $this->uniqueSlug($data['title']);
         $data['published_at'] = $data['status'] === 'published' ? now() : null;
+
+        if ($request->hasFile('image')) {
+            $data['image_path'] = $request->file('image')->store('posts', 'public');
+        }
 
         $request->user()->posts()->create($data);
 
@@ -43,11 +50,20 @@ class PostController extends Controller
         $this->authorizeOwner($post);
 
         $data = $this->validated($request);
+        unset($data['image'], $data['remove_image']);
 
         if ($data['status'] === 'published') {
             $data['published_at'] = $post->published_at ?? now();
         } else {
             $data['published_at'] = null;
+        }
+
+        if ($request->hasFile('image')) {
+            $this->deleteImage($post);
+            $data['image_path'] = $request->file('image')->store('posts', 'public');
+        } elseif ($request->boolean('remove_image')) {
+            $this->deleteImage($post);
+            $data['image_path'] = null;
         }
 
         $post->update($data);
@@ -59,6 +75,7 @@ class PostController extends Controller
     {
         $this->authorizeOwner($post);
 
+        $this->deleteImage($post);
         $post->delete();
 
         return redirect()->route('posts.manage')->with('success', 'Post deleted.');
@@ -67,16 +84,18 @@ class PostController extends Controller
     private function validated(Request $request): array
     {
         return $request->validate([
-            'title'   => ['required', 'string', 'max:255'],
-            'excerpt' => ['nullable', 'string', 'max:500'],
-            'body'    => ['required', 'string'],
-            'status'  => ['required', 'in:draft,published'],
+            'title'        => ['required', 'string', 'max:255'],
+            'excerpt'      => ['nullable', 'string', 'max:500'],
+            'body'         => ['required', 'string'],
+            'status'       => ['required', 'in:draft,published'],
+            'image'        => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'remove_image' => ['nullable', 'boolean'],
         ]);
     }
 
     private function uniqueSlug(string $title): string
     {
-        $base = Str::slug($title) ?: 'post'; // fallback for titles with no Latin letters
+        $base = Str::slug($title) ?: 'post';
         $slug = $base;
         $i = 2;
 
@@ -85,6 +104,13 @@ class PostController extends Controller
         }
 
         return $slug;
+    }
+
+    private function deleteImage(Post $post): void
+    {
+        if ($post->image_path) {
+            Storage::disk('public')->delete($post->image_path);
+        }
     }
 
     private function authorizeOwner(Post $post): void
