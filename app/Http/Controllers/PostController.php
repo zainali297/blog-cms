@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -16,10 +17,12 @@ class PostController extends Controller
         return view('posts.manage', compact('posts'));
     }
 
-    public function create()
-    {
-        return view('posts.create');
-    }
+  public function create()
+{
+    return view('posts.create', [
+        'categories' => Category::orderBy('name')->get(),
+    ]);
+}
 
     public function store(Request $request)
     {
@@ -38,13 +41,15 @@ class PostController extends Controller
         return redirect()->route('posts.manage')->with('success', 'Post created.');
     }
 
-    public function edit(Post $post)
-    {
-        $this->authorizeOwner($post);
+ public function edit(Post $post)
+{
+    $this->authorizeOwner($post);
 
-        return view('posts.edit', compact('post'));
-    }
-
+    return view('posts.edit', [
+        'post' => $post,
+        'categories' => Category::orderBy('name')->get(),
+    ]);
+}
     public function update(Request $request, Post $post)
     {
         $this->authorizeOwner($post);
@@ -90,6 +95,7 @@ class PostController extends Controller
             'status'       => ['required', 'in:draft,published'],
             'image'        => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'remove_image' => ['nullable', 'boolean'],
+            'category_id'  => ['nullable', 'exists:categories,id'],
         ]);
     }
 

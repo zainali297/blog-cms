@@ -8,6 +8,21 @@
 </div>
 
 <div>
+    <x-input-label for="category_id" value="Category" />
+    <select id="category_id" name="category_id"
+        class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+        <option value="">No category</option>
+        @foreach ($categories as $category)
+            <option value="{{ $category->id }}"
+                @selected((string) old('category_id', $post->category_id ?? '') === (string) $category->id)>
+                {{ $category->name }}
+            </option>
+        @endforeach
+    </select>
+    <x-input-error :messages="$errors->get('category_id')" class="mt-2" />
+</div>
+
+<div>
     <x-input-label for="excerpt" value="Excerpt (short summary)" />
     <textarea id="excerpt" name="excerpt" rows="3"
         class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">{{ old('excerpt', $post->excerpt ?? '') }}</textarea>
