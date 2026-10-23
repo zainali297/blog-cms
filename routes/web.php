@@ -7,6 +7,7 @@ use App\Http\Controllers\BlogController;
 
 Route::get('/', [BlogController::class, 'index'])->name('home');
 Route::get('/blog/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
+Route::get('/category/{category:slug}', [BlogController::class, 'category'])->name('blog.category');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

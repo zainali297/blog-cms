@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Post extends Model
 {
-   protected $fillable = [
-    'title', 'slug', 'excerpt', 'image_path', 'body', 'status', 'published_at',
+protected $fillable = [
+    'user_id', 'category_id', 'title', 'slug', 'excerpt', 'image_path', 'body', 'status', 'published_at',
 ];
     protected function casts(): array
     {
@@ -22,6 +22,11 @@ class Post extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function category(): BelongsTo
+{
+    return $this->belongsTo(Category::class);
+}
 
     public function scopePublished($query)
 {
